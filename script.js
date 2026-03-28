@@ -1,11 +1,25 @@
-
 let products = [];
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('glowher_cart')) || [];
 let currentSection = 'home';
 let selectedProduct = null;
-let isLoggedIn = false;
-let currentUser = null;
-let registeredUsers = [];
+let isLoggedIn = JSON.parse(localStorage.getItem('glowher_isLoggedIn')) || false;
+let currentUser = JSON.parse(localStorage.getItem('glowher_currentUser')) || null;
+let registeredUsers = JSON.parse(localStorage.getItem('glowher_users')) || [];
+
+
+function saveCart() {
+    localStorage.setItem('glowher_cart', JSON.stringify(cart));
+}
+
+function saveUsers() {
+    localStorage.setItem('glowher_users', JSON.stringify(registeredUsers));
+}
+
+function saveSession() {
+    localStorage.setItem('glowher_isLoggedIn', JSON.stringify(isLoggedIn));
+    localStorage.setItem('glowher_currentUser', JSON.stringify(currentUser));
+}
+
 
 async function fetchProducts() {
     try {
@@ -74,7 +88,7 @@ function mapCategory(apiCategory) {
     return 'clothing';
 }
 
-// Load featured products on home page
+// Load featured products 
 function loadFeaturedProducts() {
     const featuredContainer = document.getElementById('featuredProducts');
     const featuredProducts = products.filter(product => product.featured);
@@ -105,7 +119,7 @@ function loadProducts(filteredProducts = null) {
     });
 }
 
-// Create product element
+// Create product 
 function createProductElement(product) {
     const productDiv = document.createElement('div');
     productDiv.className = 'bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 group';
@@ -250,7 +264,6 @@ function decrementQuantity() {
     if (quantity > 1) {
         quantityInput.value = quantity - 1;
     }
-   
 }
 
 // Add to cart from product detail
@@ -284,7 +297,8 @@ function addToCart(productId) {
         image: product.image,
         quantity: 1
     });
-    
+
+    saveCart(); 
     updateCart();
     updateCartCount();
 }
@@ -360,7 +374,7 @@ function updateCart() {
     updateCheckoutSummary(combinedCart, subtotal, shipping, total);
 }
 
-// Update checkout summary
+// Update checkout 
 function updateCheckoutSummary(combinedCart, subtotal, shipping, total) {
     const orderItems = document.getElementById('orderItems');
     const checkoutSubtotal = document.getElementById('checkoutSubtotal');
@@ -400,6 +414,7 @@ function incrementCartItem(productId) {
             image: item.image,
             quantity: 1
         });
+        saveCart();
         updateCart();
         updateCartCount();
     }
@@ -410,6 +425,7 @@ function decrementCartItem(productId) {
     const itemIndex = cart.findIndex(item => item.id === productId);
     if (itemIndex !== -1) {
         cart.splice(itemIndex, 1);
+        saveCart(); // ← persist
         updateCart();
         updateCartCount();
     }
@@ -418,6 +434,7 @@ function decrementCartItem(productId) {
 // Remove from cart
 function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
+    saveCart(); // ← persist
     updateCart();
     updateCartCount();
 }
@@ -510,7 +527,6 @@ function completePurchase() {
 
     let valid = true;
 
-    // 
     const required = ['name','address','city','zip','country','cardName','expDate','cvv'];
     required.forEach(id => {
         valid = setFieldError(id, fields[id] ? '' : 'This field is required.') && valid;
@@ -542,6 +558,7 @@ function completePurchase() {
     document.getElementById('confirmationModal').style.display = 'flex';
     
     cart = [];
+    saveCart(); 
     updateCart();
     updateCartCount();
 }
@@ -559,6 +576,7 @@ function toggleLogin() {
     if (isLoggedIn) {
         isLoggedIn = false;
         currentUser = null;
+        saveSession(); // ← persist logout
         alert('You have been logged out.');
         return;
     }
@@ -569,16 +587,19 @@ function toggleLogin() {
         loginModal.style.display = 'flex';
     }
 }
+
 // switch to register
 function switchToRegister() {
     document.getElementById('loginModal').style.display = 'none';
     document.getElementById('registerModal').style.display = 'flex';
 }
-//switch to login
+
+// switch to login
 function switchToLogin() {
     document.getElementById('registerModal').style.display = 'none';
     document.getElementById('loginModal').style.display = 'flex';
 }
+
 // Login
 function login() {
     const email = document.getElementById('loginEmail').value;
@@ -604,7 +625,8 @@ function login() {
     }
     
     isLoggedIn = true;
-    currentUser = { email };
+    currentUser = { email, name: matchedUser.name };
+    saveSession(); 
     
     document.getElementById('loginModal').style.display = 'none';
     alert('You have been logged in successfully!');
@@ -635,8 +657,15 @@ function register() {
         alert('Password must be at least 6 characters.');
         return;
     }
+
+    const alreadyExists = registeredUsers.find(u => u.email === email);
+    if (alreadyExists) {
+        alert('An account with this email already exists.');
+        return;
+    }
     
     registeredUsers.push({ name, email, password });
+    saveUsers(); // ← persist new user
 
     document.getElementById('registerModal').style.display = 'none';
     document.getElementById('loginModal').style.display = 'flex';
@@ -646,9 +675,9 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchProducts();
     setupSearch();
     showSection('home');
-    updateCartCount();
+    updateCart();       // restore cart UI from localStorage
+    updateCartCount();  // restore cart count badge
     document.getElementById('confirmationModal').style.display = 'none';
     document.getElementById('loginModal').style.display = 'none'; 
     document.getElementById('registerModal').style.display = 'none';
-   
 });
