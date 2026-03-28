@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowHer Clothing Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#000000',
+                        secondary: '#ffffff',
+                        accent: '#f5f5f5',
+                        dark: '#111111',  
+                        muted: '#6b7280' 
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+#home, #catalog, #cart, #checkout, #productDetail {
+    display: none;
+}
+#home.visible, #catalog.visible, #cart.visible,
+#checkout.visible, #productDetail.visible {
+    display: block;
+}
+
+#loginModal,
+#registerModal,
+#confirmationModal {
+    display: none;
+}
+    </style>
+</head>
+
+<body class="font-sans m-0 p-0 text-gray-800 bg-secondary text-primary flex flex-col min-h-screen">
+<header class="bg-primary text-white py-4 shadow-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-5 flex flex-col md:flex-row justify-between items-center gap-4">
+        <h1 class="text-2xl md:text-3xl font-bold">GlowHer</h1>
+        <div class="flex flex-1 max-w-md">
+            <input type="text" id="searchInput" placeholder="Search products..." class="flex-1 px-4 py-2 border-none rounded-l-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-dark">
+            <button id="searchButton" class="bg-primary-dark hover:bg-gray-700 text-white px-4 py-2 rounded-r-md transition-colors">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <div class="cart-icon">
+            <a href="#" onclick="showSection('cart')" class="text-white no-underline text-xl flex items-center gap-2 hover:text-white-200 transition-colors">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cartCount" class="bg-white text-primary rounded-full w-6 h-6 inline-flex items-center justify-center text-sm font-bold">0</span>
+            </a>
+        </div>
+    </div>
+    <nav class="flex justify-center bg-primary-dark py-3 mt-4 overflow-x-auto">
+        <a href="#" onclick="showSection('home')" class="nav-link active text-white no-underline px-4 py-2 mx-2 font-medium rounded transition-colors hover:bg-white/20">Home</a>
+        <a href="#" onclick="showSection('catalog')" class="nav-link text-white no-underline px-4 py-2 mx-2 font-medium rounded transition-colors hover:bg-white/20">Catalog</a>
+        <a href="#" onclick="showSection('cart')" class="nav-link text-white no-underline px-4 py-2 mx-2 font-medium rounded transition-colors hover:bg-white/20">Cart</a>
+        <a href="#" onclick="toggleLogin()" class="nav-link text-white no-underline px-4 py-2 mx-2 font-medium rounded transition-colors hover:bg-white/20">Login</a>
+        <a href="#" onclick="scrollToContact()" class="nav-link text-white no-underline px-4 py-2 mx-2 font-medium rounded transition-colors hover:bg-white/20 flex items-center gap-1">
+            <i class="fas fa-envelope text-sm"></i> Contact Us
+        </a>
+    </nav>
+</header>
+
+<div class="flex-1 max-w-6xl mx-auto px-5 py-5 w-full">
+    
+    <!-- Home Section -->
+    <div id="home" class="visible w-full">
+
+        <div class="relative w-full h-[400px] md:h-[500px] overflow-hidden rounded-xl"
+     style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://www.shoppolishedboutique.com/cdn/shop/collections/new-arrivals-959760.jpg?v=1745285801'); background-size: cover; background-position: center;">
+    
+    <div class="relative h-full flex items-end justify-start px-10 pb-16">
+        <div class="max-w-md">
+            <p class="text-lg md:text-xl text-white/90 mb-6">
+                Discover the latest trends in fashion
+            </p>
+            <button onclick="showSection('catalog')"
+                class="bg-black text-white px-8 py-3 hover:bg-gray-800 transition">
+                Shop Now
+            </button>
+        </div>
+    </div>
+</div>
+
+        <section class="mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-2">Featured Products</h2>
+            <div class="h-1 w-20 bg-primary mx-auto mb-8 rounded-full"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="featuredProducts">
+                <!-- Featured products will be loaded here -->
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-2">Shop by Category</h2>
+            <div class="h-1 w-20 bg-primary mx-auto mb-8 rounded-full"></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer group" onclick="filterByCategory('all')">
+                    <img src="https://thumbs.dreamstime.com/b/clothes-hangers-colorful-clothes-women-shop-summer-sale-73852501.jpg" alt="All Products" class="w-full h-36 md:h-44 object-cover group-hover:scale-105 transition-transform duration-300">
+                    <h3 class="p-4 text-center text-lg font-semibold">All Products</h3>
+                </div>
+                <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer group" onclick="filterByCategory('clothing')">
+                    <img src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcR5x4jgFxUvb99C2-RQt1u15dgYGJ7v9nQrynlctwM0JIf0XBLOrbVIlqx7EpnzkKuekNTr7kwKywhUgKDnNfIILs-ubdAqdee21aFPO-3wUy6bitcxU0G5Mw&usqp=CAc" alt="Clothing" class="w-full h-36 md:h-44 object-cover group-hover:scale-105 transition-transform duration-300">
+                    <h3 class="p-4 text-center text-lg font-semibold">Clothing</h3>
+                </div>
+                <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer group" onclick="filterByCategory('accessories')">
+                    <img src="https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSfrR6-FcyKd-_SvIkcP7pJSpVklOBF9IW30Mdtgab1LgSkDG9RLBZfnGwaDGum07gxsoUwHl5xbr5PNBrsnkeXDNRq2QzNRL1Apk7lNpxKIFz7jUdUBEWG8g&usqp=CAc" alt="Accessories" class="w-full h-36 md:h-44 object-cover group-hover:scale-105 transition-transform duration-300">
+                    <h3 class="p-4 text-center text-lg font-semibold">Accessories</h3>
+                </div>
+                <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer group" onclick="filterByCategory('footwear')">
+                    <img src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRm3cpvJ3Ullb3LxEa1E3JwNMBMu61BxqJY9UPQJbjHyB_5j27sF6uTpjFobE6t1H7YPfQwdAML-p2NZmM6qpXlPguNQ2RKHuCGPblfb7LtCUKJ0-Jt&usqp=CAc" alt="Footwear" class="w-full h-36 md:h-44 object-cover group-hover:scale-105 transition-transform duration-300">
+                    <h3 class="p-4 text-center text-lg font-semibold">Footwear</h3>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Catalog Section -->
+    <div id="catalog" class="catalog w-full">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl font-bold mb-2">Product Catalog</h2>
+            <div class="h-1 w-20 bg-primary mx-auto mb-6 rounded-full"></div>
+            <div class="flex flex-wrap justify-center gap-4 md:gap-6">
+                <div class="flex items-center gap-2">
+                    <label for="categoryFilter" class="font-medium text-gray-700">Category:</label>
+                    <select id="categoryFilter" onchange="applyFilters()" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary bg-white">
+                        <option value="all">All Categories</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="accessories">Accessories</option>
+                        <option value="footwear">Footwear</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label for="priceSort" class="font-medium text-gray-700">Sort by:</label>
+                    <select id="priceSort" onchange="applyFilters()" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary bg-white">
+                        <option value="default">Featured</option>
+                        <option value="low-high">Price: Low to High</option>
+                        <option value="high-low">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="productsGrid">
+            <!-- Products will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Product Detail Section -->
+    <div id="productDetail" class="product-detail">
+        <div class="mb-6">
+            <button onclick="showSection('catalog')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                <i class="fas fa-arrow-left"></i> Back to Catalog
+            </button>
+        </div>
+        <div id="productDetailContent" class="bg-white rounded-xl p-6 shadow-lg">
+            <!-- Product details will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Cart Section -->
+    <div id="cart" class="cart w-full">
+        <h2 class="text-2xl md:text-3xl font-bold text-center mb-2">Shopping Cart</h2>
+        <div class="h-1 w-20 bg-primary mx-auto mb-8 rounded-full"></div>
+        <div class="bg-white rounded-xl p-6 shadow-lg">
+            <div id="cartItems" class="mb-6">
+                <!-- Cart items will be loaded here -->
+            </div>
+            <div class="bg-gray-50 p-5 rounded-lg">
+                <div class="flex justify-between mb-3 text-gray-700">
+                    <span>Subtotal:</span>
+                    <span>$<span id="subtotalPrice">0</span></span>
+                </div>
+                <div class="flex justify-between mb-3 text-gray-700">
+                    <span>Shipping:</span>
+                    <span>$<span id="shippingPrice">0</span></span>
+                </div>
+                <div class="flex justify-between pt-4 mt-4 border-t border-gray-200 text-xl font-bold">
+                    <span>Total:</span>
+                    <span class="text-primary">$<span id="totalPrice">0</span></span>
+                </div>
+                <button onclick="showSection('checkout')" id="checkoutButton" disabled class="w-full mt-5 bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Section -->
+    <div id="checkout" class="checkout w-full">
+        <h2 class="text-2xl md:text-3xl font-bold text-center mb-2">Checkout</h2>
+        <div class="h-1 w-20 bg-primary mx-auto mb-8 rounded-full"></div>
+        <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex-[2] min-w-0">
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-xl font-bold mb-6 text-gray-800">Shipping Information</h3>
+                    <div class="mb-5">
+                        <label for="name" class="block mb-2 font-medium text-gray-700">Full Name</label>
+                        <input type="text" id="name" placeholder="Ahmed Ali" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div class="mb-5">
+                        <label for="email" class="block mb-2 font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" placeholder="ali@example.com" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div class="mb-5">
+                        <label for="address" class="block mb-2 font-medium text-gray-700">Address</label>
+                        <input type="text" id="address" placeholder="123 Main St" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4 mb-5">
+                        <div class="flex-1">
+                            <label for="city" class="block mb-2 font-medium text-gray-700">City</label>
+                            <input type="text" id="city" placeholder="October" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div class="flex-1">
+                            <label for="zip" class="block mb-2 font-medium text-gray-700">ZIP Code</label>
+                            <input type="text" id="zip" placeholder="10001" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                    <div class="mb-5">
+                        <label for="country" class="block mb-2 font-medium text-gray-700">Country</label>
+                        <select id="country" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white">
+                            <option value="">Select Country</option>
+                            <option value="Egypt">Egypt</option>
+                            <option value="UAE">UAE</option>
+                            <option value="US">United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="UK">United Kingdom</option>
+                        </select>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold mb-6 mt-8 text-gray-800">Payment Information</h3>
+                    <div class="mb-5">
+                        <label for="cardName" class="block mb-2 font-medium text-gray-700">Name on Card</label>
+                        <input type="text" id="cardName" placeholder="Ahmed Ali" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div class="mb-5">
+                        <label for="cardNumber" class="block mb-2 font-medium text-gray-700">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4 mb-5">
+                        <div class="flex-1">
+                            <label for="expDate" class="block mb-2 font-medium text-gray-700">Expiration Date</label>
+                            <input type="text" id="expDate" placeholder="MM/YY" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div class="flex-1">
+                            <label for="cvv" class="block mb-2 font-medium text-gray-700">CVV</label>
+                            <input type="text" id="cvv" placeholder="123" maxlength="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <button onclick="completePurchase()" class="w-full mt-6 bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
+                        Complete Purchase
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex-1 min-w-0 lg:order-first xl:order-last">
+                <div class="bg-gray-50 rounded-xl p-6 shadow-lg sticky top-32">
+                    <h3 class="text-xl font-bold mb-4 pb-4 border-b border-gray-200">Order Summary</h3>
+                    <div id="orderItems" class="max-h-64 overflow-y-auto">
+                        <!-- Order items will be loaded here -->
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <div class="flex justify-between mb-2 text-gray-600">
+                            <span>Subtotal:</span>
+                            <span>$<span id="checkoutSubtotal">0</span></span>
+                        </div>
+                        <div class="flex justify-between mb-2 text-gray-600">
+                            <span>Shipping:</span>
+                            <span>$<span id="checkoutShipping">0</span></span>
+                        </div>
+                        <div class="flex justify-between pt-3 mt-3 border-t border-gray-200 text-lg font-bold">
+                            <span>Total:</span>
+                            <span class="text-primary">$<span id="checkoutTotal">0</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md relative shadow-2xl">
+            <span class="absolute right-5 top-4 text-2xl cursor-pointer text-gray-400 hover:text-gray-600" onclick="toggleLogin()">&times;</span>
+            <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+            <div class="mb-5">
+                <label for="loginEmail" class="block mb-2 font-medium text-gray-700">Email</label>
+                <input type="email" id="loginEmail" placeholder="Email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+            <div class="mb-5">
+                <label for="loginPassword" class="block mb-2 font-medium text-gray-700">Password</label>
+                <input type="password" id="loginPassword" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+            <button onclick="login()" class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition-colors">Login</button>
+            <p class="mt-4 text-center text-gray-600">Don't have an account? <a href="#" onclick="switchToRegister()" class="text-primary hover:underline font-medium">Register</a></p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="fixed inset-0 z-[9999] bg-black/50 items-center justify-center p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md relative shadow-2xl">
+            <span class="absolute right-5 top-4 text-2xl cursor-pointer text-gray-400 hover:text-gray-600" onclick="toggleLogin()">&times;</span>
+            <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
+            <div class="mb-5">
+                <label for="registerName" class="block mb-2 font-medium text-gray-700">Full Name</label>
+                <input type="text" id="registerName" placeholder="Full Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+            <div class="mb-5">
+                <label for="registerEmail" class="block mb-2 font-medium text-gray-700">Email</label>
+                <input type="email" id="registerEmail" placeholder="Email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+            <div class="mb-5">
+                <label for="registerPassword" class="block mb-2 font-medium text-gray-700">Password</label>
+                <input type="password" id="registerPassword" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+            <div class="mb-5">
+                <label for="confirmPassword" class="block mb-2 font-medium text-gray-700">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm Password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+            <button onclick="register()" class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition-colors">Register</button>
+            <p class="mt-4 text-center text-gray-600">Already have an account? <a href="#" onclick="switchToLogin()" class="text-primary hover:underline font-medium">Login</a></p>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 z-[9999] bg-black/50 items-center justify-center p-4">
+        <div class="bg-white rounded-xl p-8 w-full max-w-md relative shadow-2xl text-center">
+            <span class="absolute right-5 top-4 text-2xl cursor-pointer text-gray-400 hover:text-gray-600" onclick="closeConfirmation()">&times;</span>
+            <div class="text-6xl text-green-500 mb-6">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-4">Order Confirmed!</h2>
+            <p class="text-gray-600 mb-2">Your order has been successfully placed.</p>
+            <p class="text-gray-600 mb-2">Order #: <span id="orderNumber" class="font-bold text-gray-800"></span></p>
+            <p class="text-gray-600 mb-6">A confirmation email has been sent to <span id="confirmationEmail" class="font-bold text-gray-800"></span></p>
+            <button onclick="closeConfirmation()" class="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-8 rounded-lg transition-colors">Continue Shopping</button>
+        </div>
+    </div>
+</div>
+
+<!--Footer-->
+<footer class="bg-primary text-white pt-12 pb-6" style="flex-shrink: 0;">
+    <div class="max-w-6xl mx-auto px-5 py-5 w-full" style="flex: 1 0 auto;">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">GlowHer</h3>
+                <p class="text-gray-400">Your one-stop shop for fashion needs.</p>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" onclick="showSection('home')" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                    <li><a href="#" onclick="showSection('catalog')" class="text-gray-400 hover:text-white transition-colors">Catalog</a></li>
+                    <li><a href="#" onclick="showSection('cart')" class="text-gray-400 hover:text-white transition-colors">Cart</a></li>
+                </ul>
+            </div>
+
+            <!--Contact Us section-->
+            <div id="contactSection">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-envelope text-base"></i> Contact Us
+                </h3>
+                <ul class="space-y-3 text-gray-400">
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-envelope text-sm w-4"></i>
+                        <a href="mailto:info@glowher.com" class="hover:text-white transition-colors">info@glowher.com</a>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-phone text-sm w-4"></i>
+                        <a href="tel:+11234567890" class="hover:text-white transition-colors">(123) 456-7890</a>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-clock text-sm w-4"></i>
+                        <span>Sunday – Thursday: 9 AM – 6 PM</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-sm w-4"></i>
+                        <span>Cairo, Egypt</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold mb-4">Follow Us</h3>
+                <div class="flex gap-4">
+                    <a href="#" class="text-white text-2xl hover:text-gray-300 transition-colors"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-white text-2xl hover:text-gray-300 transition-colors"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-white text-2xl hover:text-gray-300 transition-colors"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white text-2xl hover:text-gray-300 transition-colors"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center pt-6 border-t border-gray-700">
+            <p class="text-gray-400">&copy; 2026 GlowHer. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
